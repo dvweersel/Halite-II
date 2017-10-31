@@ -1,8 +1,8 @@
 # Created by .ignore support plugin (hsz.mobi)
 /README.md
 /halite.exe
-.gitignore
 .idea/
 *.class
 *.log
 *.hlt
+/out/

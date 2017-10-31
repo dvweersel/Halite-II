@@ -3,3 +3,6 @@
 /halite.exe
 .gitignore
 .idea/
+*.class
+*.log
+*.hlt

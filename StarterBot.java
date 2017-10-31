@@ -2,11 +2,11 @@ import hlt.*;
 
 import java.util.ArrayList;
 
-public class MyBot {
+public class StarterBot {
 
     public static void main(final String[] args) {
         final Networking networking = new Networking();
-        final GameMap gameMap = networking.initialize("MyBot");
+        final GameMap gameMap = networking.initialize("StarterBot");
 
         final ArrayList<Move> moveList = new ArrayList<>();
         for (;;) {

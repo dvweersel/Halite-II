@@ -1,5 +1,6 @@
 package hlt;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -76,7 +77,7 @@ public class Networking {
     public GameMap initialize(final String botName) {
         final int myId = Integer.parseInt(readLine());
         try {
-            DebugLog.initialize(new FileWriter(String.format("%d - %s.log", myId, botName)));
+            DebugLog.initialize(new FileWriter(new File("logs", String.format("%d - %s.log", myId, botName))));
         }
         catch (IOException e) {
             e.printStackTrace();

@@ -1,6 +1,7 @@
 import hlt.*;
 
 import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -35,55 +36,50 @@ public class MyBot {
                     break;
                 }
 
-                if(allPlanetsOwned) {
-                    for (final Planet planet : planetsByDistance.values()) {
-                        if (planet.getOwner() == gameMap.getMyPlayerId()) {
-                            continue;
-                        }
-                    }
-                }
-
                 /* Find new resources */
                 for (final Planet planet : planetsByDistance.values()) {
                     /* My planet */
+                    DebugLog.addLog("=Planet=");
                     if (planet.getOwner() == gameMap.getMyPlayerId()) {
-                        DebugLog.addLog(String.format("Docked ships is %d", planet.getDockedShips().size()));
+                        DebugLog.addLog("==My Planet==");
                         /* TODO make the production cap dependent on the gamestate */
-                        if (planet.getDockedShips().size() < 3){
-                            if (ship.canDock(planet)){
-                                DebugLog.addLog("Docking owned planet");
+                        DebugLog.addLog(String.format("==Docked ships: %d Docking spots %d", planet.getDockedShips().size(), planet.getDockingSpots()));
+                        if (planet.getDockedShips().size() < planet.getDockingSpots()) {
+                            if (ship.canDock(planet)) {
+                                DebugLog.addLog("==Docking owned planet");
                                 moveList.add(new DockMove(ship, planet));
                                 break;
-                            }
-                            else{
+                            } else {
                                 final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
 
                                 if (newThrustMove != null) {
-                                    DebugLog.addLog("Moving to owned planet");
+                                    DebugLog.addLog("==Moving to dock to owned planet");
                                     moveList.add(newThrustMove);
 
                                     break;
                                 }
-                                DebugLog.addLog("Thrustmove is null");
+                                DebugLog.addLog("==Thrustmove is null");
                             }
-
                         }
+                        DebugLog.addLog("==Not docking to owned planet");
                         continue;
                     }
 
                     if (planet.isOwned() && !allPlanetsOwned) {
+                        DebugLog.addLog("=Not all planets owned - attack");
                         continue;
                     }
 
                     /* If we can dock, we dock */
-                    if (ship.canDock(planet)) {
-                        DebugLog.addLog("Planet not owned - docking");
+                    if (!planet.isOwned() && ship.canDock(planet)) {
+                        DebugLog.addLog("=Planet not owned - docking");
                         moveList.add(new DockMove(ship, planet));
                         break;
                     }
 
                     final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
                     if (newThrustMove != null) {
+                        DebugLog.addLog("=Thrusting");
                         moveList.add(newThrustMove);
 
                         break;

@@ -46,6 +46,16 @@ public class Planet extends Entity {
         return getOwner() != -1;
     }
 
+    public boolean isOwnedByMe(final GameMap gameMap) {
+
+        return getOwner() == gameMap.getMyPlayerId();
+    }
+
+    public boolean isEnemyPlanet(final GameMap gameMap) {
+
+        return getOwner() != gameMap.getMyPlayerId() && isOwned();
+    }
+
     @Override
     public String toString() {
         return "Planet[" +

@@ -31,6 +31,11 @@ public class Entity extends Position {
         return radius;
     }
 
+    public Position getPosition() {
+
+        return new Position(this.getXPos(), this.getYPos());
+    }
+
     @Override
     public String toString() {
         return "Entity[" +

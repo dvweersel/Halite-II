@@ -8,8 +8,8 @@ public class Navigation {
             final Entity dockTarget,
             final int maxThrust)
     {
-        final int maxCorrections = Constants.MAX_NAVIGATION_CORRECTIONS;
         final boolean avoidObstacles = true;
+        final int maxCorrections = Constants.MAX_NAVIGATION_CORRECTIONS;
         final double angularStepRad = Math.PI/180.0;
         final Position targetPos = ship.getClosestPoint(dockTarget);
 
@@ -25,6 +25,7 @@ public class Navigation {
             final int maxCorrections,
             final double angularStepRad)
     {
+
         if (maxCorrections <= 0) {
             return null;
         }

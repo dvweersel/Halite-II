@@ -122,6 +122,19 @@ public class GameMap {
         return entityByDistance;
     }
 
+    public Map<Double, Ship> nearbyShipsByDistance(final Ship ship) {
+        final Map<Double, Ship> entityByDistance = new TreeMap<>();
+
+        for (final Ship otherShip : allShips) {
+            if (ship.equals(otherShip)) {
+                continue;
+            }
+            entityByDistance.put(ship.getDistanceTo(otherShip), otherShip);
+        }
+
+        return entityByDistance;
+    }
+
     public GameMap updateMap(final Metadata mapMetadata) {
         DebugLog.addLog("--- NEW TURN ---");
         final int numberOfPlayers = MetadataParser.parsePlayerNum(mapMetadata);

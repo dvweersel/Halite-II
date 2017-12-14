@@ -122,14 +122,11 @@ public class GameMap {
         return entityByDistance;
     }
 
-    public Map<Double, Ship> nearbyShipsByDistance(final Ship ship) {
+    public Map<Double, Ship> nearbyShipsByDistance(final Planet planet) {
         final Map<Double, Ship> entityByDistance = new TreeMap<>();
 
-        for (final Ship otherShip : allShips) {
-            if (ship.equals(otherShip)) {
-                continue;
-            }
-            entityByDistance.put(ship.getDistanceTo(otherShip), otherShip);
+        for (final Ship ship : allShips) {
+            entityByDistance.put(ship.getDistanceTo(planet), ship);
         }
 
         return entityByDistance;

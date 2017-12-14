@@ -8,6 +8,7 @@ public class Ship extends Entity {
     private final int dockedPlanet;
     private final int dockingProgress;
     private final int weaponCooldown;
+    public boolean hasMoved;
 
     public Ship(final int owner, final int id, final double xPos, final double yPos,
                 final int health, final DockingStatus dockingStatus, final int dockedPlanet,
@@ -19,6 +20,7 @@ public class Ship extends Entity {
         this.dockedPlanet = dockedPlanet;
         this.dockingProgress = dockingProgress;
         this.weaponCooldown = weaponCooldown;
+        this.hasMoved = Boolean.FALSE;
     }
 
     public int getWeaponCooldown() {

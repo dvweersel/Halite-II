@@ -37,55 +37,81 @@ public class MyBot {
                 }
 
                 /* Find new resources */
-                for (final Planet planet : planetsByDistance.values()) {
-                    /* My planet */
-                    DebugLog.addLog("=Planet=");
-                    if (planet.getOwner() == gameMap.getMyPlayerId()) {
-                        DebugLog.addLog("==My Planet==");
-                        /* TODO make the production cap dependent on the gamestate */
-                        DebugLog.addLog(String.format("==Docked ships: %d Docking spots %d", planet.getDockedShips().size(), planet.getDockingSpots()));
-                        if (planet.getDockedShips().size() < planet.getDockingSpots()) {
+                for (Map.Entry<Double, Entity> entityEntry : gameMap.nearbyEntitiesByDistance(ship).entrySet()) {
+
+                    if (entityEntry.getValue() instanceof Ship) {
+                        Ship otherShip = (Ship) entityEntry.getValue();
+                        if (otherShip.getOwner() != gameMap.getMyPlayerId()) {
+
+                            if (entityEntry.getKey() < 5) {
+                                break;
+                            } else if(entityEntry.getKey() > Constants.MAX_SPEED) {
+                                int thrust = Constants.MAX_SPEED;
+                            } else {
+                                int thrust = (int) entityEntry.getKey().intValue()/2;
+                            }
+
+                            final ThrustMove newThrustMove = Navigation.navigateShipTowardsTarget(gameMap, ship, otherShip.getPosition(), Constants.MAX_SPEED, Boolean.TRUE, Constants.MAX_NAVIGATION_CORRECTIONS, Math.PI/180.0);
+
+                            if (newThrustMove != null) {
+                                DebugLog.addLog("==Moving to dock to owned planet");
+                                moveList.add(newThrustMove);
+
+                                break;
+                            }
+                            DebugLog.addLog("==Thrustmove is null");
+                        }
+
+                    }
+
+                    if (entityEntry.getValue() instanceof Planet) {
+                        DebugLog.addLog("=Planet=");
+                        Planet planet = (Planet) entityEntry.getValue();
+
+                        if (!planet.isOwned()) {
+                            DebugLog.addLog("==Unowned Planet==");
                             if (ship.canDock(planet)) {
-                                DebugLog.addLog("==Docking owned planet");
+                                DebugLog.addLog("=Planet not owned - docking");
                                 moveList.add(new DockMove(ship, planet));
                                 break;
-                            } else {
-                                final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
-
-                                if (newThrustMove != null) {
-                                    DebugLog.addLog("==Moving to dock to owned planet");
-                                    moveList.add(newThrustMove);
-
-                                    break;
-                                }
-                                DebugLog.addLog("==Thrustmove is null");
                             }
+
+                            final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
+                            if (newThrustMove != null) {
+                                DebugLog.addLog("=Thrusting");
+                                moveList.add(newThrustMove);
+
+                                break;
+                            }
+
                         }
-                        DebugLog.addLog("==Not docking to owned planet");
+
+                        if (planet.getOwner() == gameMap.getMyPlayerId()) {
+                            DebugLog.addLog("==My Planet==");
+                            DebugLog.addLog(String.format("==Docked ships: %d Docking spots %d", planet.getDockedShips().size(), planet.getDockingSpots()));
+                            if (planet.getDockedShips().size() < planet.getDockingSpots()) {
+                                if (ship.canDock(planet)) {
+                                    DebugLog.addLog("==Docking owned planet");
+                                    moveList.add(new DockMove(ship, planet));
+                                    break;
+                                } else {
+                                    final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
+
+                                    if (newThrustMove != null) {
+                                        DebugLog.addLog("==Moving to dock to owned planet");
+                                        moveList.add(newThrustMove);
+
+                                        break;
+                                    }
+                                    DebugLog.addLog("==Thrustmove is null");
+                                }
+                            }
+                            DebugLog.addLog("==Not docking to owned planet");
+                            continue;
+                        }
+
                         continue;
                     }
-
-                    if (planet.isOwned() && !allPlanetsOwned) {
-                        DebugLog.addLog("=Not all planets owned - attack");
-                        continue;
-                    }
-
-                    /* If we can dock, we dock */
-                    if (!planet.isOwned() && ship.canDock(planet)) {
-                        DebugLog.addLog("=Planet not owned - docking");
-                        moveList.add(new DockMove(ship, planet));
-                        break;
-                    }
-
-                    final ThrustMove newThrustMove = Navigation.navigateShipToDock(gameMap, ship, planet, Constants.MAX_SPEED);
-                    if (newThrustMove != null) {
-                        DebugLog.addLog("=Thrusting");
-                        moveList.add(newThrustMove);
-
-                        break;
-                    }
-
-                    break;
                 }
             }
             Networking.sendMoves(moveList);

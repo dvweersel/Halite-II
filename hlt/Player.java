@@ -14,9 +14,7 @@ public class Player {
         this.ships = Collections.unmodifiableMap(ships);
     }
 
-    public Map<Integer, Ship> getShips() {
-        return ships;
-    }
+    public Map<Integer, Ship> getShips() {  return ships; }
 
     public Ship getShip(final int entityId) {
         return ships.get(entityId);
